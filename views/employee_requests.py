@@ -1,10 +1,14 @@
+from .location_requests import LOCATIONS
+import random
 EMPLOYEES = [
   {
     "name": "Rochelle",
     "id": 1,
+    "locationId": 1,
   }, {
     "name": "Cat",
-    "id": 2
+    "id": 2,
+    "locationId": 2
   }
 ]
 
@@ -19,3 +23,21 @@ def get_single_employee(id):
             requested_employee = employee
 
     return requested_employee
+  
+def create_employee(employee):
+    
+  max_id = EMPLOYEES[-1]["id"]
+  
+  new_id = max_id + 1
+
+  employee["id"] = new_id
+    
+  # new_location_id = random.choice(LOCATIONS["id"])
+  
+  # print(new_location_id)
+    
+  # employee["locationId"] = new_location_id
+
+  EMPLOYEES.append(employee)
+
+  return employee
