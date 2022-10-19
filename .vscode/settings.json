@@ -1,4 +1,5 @@
 {
   "python.formatting.autopep8Path": "paste in the output from the which command",
-  "python.linting.pylintEnabled": true
+  "python.linting.pylintEnabled": true,
+  "python.formatting.provider": "black"
 }
