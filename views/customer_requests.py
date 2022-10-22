@@ -13,7 +13,6 @@ CUSTOMERS = [
 ]
 
 def get_all_customers():
-#   return CUSTOMERS
   with sqlite3.connect("./kennel.sqlite3") as conn:
 
         # Just use these. It's a Black Box.
@@ -50,20 +49,34 @@ def get_all_customers():
             customers.append(customer.__dict__)
 
     # Use `json` package to properly serialize list as JSON
-        return json.dumps(customer)
+        return json.dumps(customers)
   
 
 
 
 
 def get_single_customer(id):
-  requested_customer = None
-  
-  for customer in CUSTOMERS:
-    if customer["id"] == id:
-      requested_customer == customer
-      
-  return requested_customer
+  with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            c.id,
+            c.name,
+            c.address,
+            c.email,
+            c.password
+        FROM customer c
+        WHERE c.id = ?
+        """, ( id, ))
+        
+        data = db_cursor.fetchone()
+        
+        customer = Customer(data['id'], data['name'], data  ['address'],data['email'], data['password'])
+        
+        return json.dumps(customer.__dict__)
 
 def create_customer(customer):
   max_id = CUSTOMERS[-1]["id"]
