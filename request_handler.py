@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 import json
-from views import get_all_animals, get_single_animal, get_single_location, get_all_locations, create_animal, get_all_customers, get_single_customer, get_all_employees, get_single_employee, create_location, create_employee, create_customer, delete_animal, delete_location, delete_customer, delete_employee, update_animal, update_location, update_customer, update_employee, get_customers_by_email, get_animals_by_location, get_employees_by_location, get_animals_by_status
+from views import get_all_animals, get_single_animal, get_single_location, get_all_locations, create_animal, get_all_customers, get_single_customer, get_all_employees, get_single_employee, create_location, create_employee, create_customer, delete_animal, delete_location, delete_customer, delete_employee, update_animal, update_location, update_customer, update_employee, get_customers_by_email, get_animals_by_location, get_employees_by_location, get_animals_by_status, get_customers_by_name
 
 
 # Here's a class. It inherits from another class.
@@ -43,9 +43,10 @@ class HandleRequests(BaseHTTPRequestHandler):
     # Here's a method on the class that overrides the parent's method.
     # It handles any GET request.
     def do_GET(self):
+        """_summary_
+        """
         self._set_headers(200)
-
-        response = {}
+        response = {}  # Default response
 
         # Parse URL and store entire tuple in a variable
         parsed = self.parse_url(self.path)
@@ -59,37 +60,36 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_animal(id)}"
                 else:
                     response = f"{get_all_animals()}"
-            elif resource == "customers":
-                if id is not None:
-                    response = f"{get_single_customer(id)}"
-                else:
-                    response = f"{get_all_customers()}"
-            elif resource == "employees":
-                if id is not None:
-                    response = f"{get_single_employee(id)}"
-                else:
-                    response = f"{get_all_employees()}"
-            elif resource == "location":
+            if resource == "locations":
                 if id is not None:
                     response = f"{get_single_location(id)}"
                 else:
                     response = f"{get_all_locations()}"
-                    
+            if resource == "employees":
+                if id is not None:
+                    response = f"{get_single_employee(id)}"
+                else:
+                    response = f"{get_all_employees()}"
+            if resource == "customers":
+                if id is not None:
+                    response = f"{get_single_customer(id)}"
+                else:
+                    response = f"{get_all_customers()}"
         else: # There is a ? in the path, run the query param functions
             (resource, query) = parsed
-            
+
             # see if the query dictionary has an email key
             if query.get('email') and resource == 'customers':
                 response = get_customers_by_email(query['email'][0])
-                
-            if query.get('location_id') and resource == 'employees':
-                response = get_employees_by_location(query['location_id'][0])
-                
+            if query.get('name') and resource == 'customers':
+                response = get_customers_by_name(query['name'][0])
             if query.get('location_id') and resource == 'animals':
                 response = get_animals_by_location(query['location_id'][0])
-                
             if query.get('status') and resource == 'animals':
                 response = get_animals_by_status(query['status'][0])
+            if query.get('location_id') and resource == 'employees':
+                response = get_employees_by_location(query['location_id'][0])
+
 
         self.wfile.write(response.encode())
         
